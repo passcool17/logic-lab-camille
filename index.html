@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="fr-CA">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#6B8F71">
+  <meta name="description" content="Atelier Logique : vérifie un argument, fais une table de vérité, analyse une affirmation. Pour Camille.">
+  <title>Atelier Logique · Camille</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="apple-touch-icon" href="./favicon.svg">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./style.css?v=ll-v1">
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="brand-wrap">
+        <span class="logo" aria-hidden="true">∀</span>
+        <div>
+          <div class="brand">Atelier Logique</div>
+          <div class="brand-sub">pour Camille</div>
+        </div>
+      </div>
+    </header>
+
+    <section class="card intro">
+      <p class="eyebrow">Logic theorist, pas conspiracy theorist</p>
+      <h1>Vérifier le raisonnement</h1>
+      <p class="lede">Un <em>logic theorist</em> (comme Logic Theorist, 1956) part des prémisses et regarde si la conclusion suit. Un conspiracy theorist part de la conclusion et cherche ce qui la confirme. Ici, on joue au premier.</p>
+    </section>
+
+    <nav class="tabs" role="tablist" aria-label="Outils">
+      <button type="button" class="tab active" role="tab" data-tab="validite" aria-selected="true">Validité</button>
+      <button type="button" class="tab" role="tab" data-tab="table" aria-selected="false">Table de vérité</button>
+      <button type="button" class="tab" role="tab" data-tab="analyser" aria-selected="false">Analyser</button>
+    </nav>
+
+    <section id="panel-validite" class="panel" role="tabpanel">
+      <div class="card">
+        <h2>Validité d’un argument</h2>
+        <p class="lede">Écris tes prémisses (une par ligne) et la conclusion. L’app teste toutes les possibilités.</p>
+        <p class="eyebrow">Exemples</p>
+        <div id="examples" class="chips"></div>
+        <label class="field" for="premises">
+          <span>Prémisses</span>
+          <textarea id="premises" rows="4" placeholder="P → Q&#10;P" autocomplete="off" spellcheck="false"></textarea>
+        </label>
+        <label class="field" for="conclusion">
+          <span>Conclusion</span>
+          <input id="conclusion" type="text" placeholder="Q" autocomplete="off" spellcheck="false">
+        </label>
+        <div id="sym-validite" class="sym-bar" aria-label="Symboles"></div>
+        <button type="button" class="btn" id="btn-validite">Vérifier</button>
+        <div id="validite-result" class="result" hidden></div>
+      </div>
+    </section>
+
+    <section id="panel-table" class="panel" role="tabpanel" hidden>
+      <div class="card">
+        <h2>Table de vérité</h2>
+        <p class="lede">Entre une formule avec P, Q, R et ¬ ∧ ∨ → ↔. Tu verras si c’est toujours vrai, toujours faux, ou entre les deux.</p>
+        <p class="eyebrow">Exemples</p>
+        <div id="table-examples" class="chips"></div>
+        <label class="field" for="formula">
+          <span>Formule</span>
+          <input id="formula" type="text" placeholder="(P → Q) ∧ P" autocomplete="off" spellcheck="false">
+        </label>
+        <div id="sym-table" class="sym-bar" aria-label="Symboles"></div>
+        <button type="button" class="btn" id="btn-table">Générer la table</button>
+        <div id="table-result" class="result" hidden></div>
+      </div>
+    </section>
+
+    <section id="panel-analyser" class="panel" role="tabpanel" hidden>
+      <div class="card">
+        <h2>Analyser une affirmation</h2>
+        <p class="lede">Colle une phrase forte. L’app te guide avec les questions d’un logicien. Tes réponses restent sur ton téléphone.</p>
+        <p class="eyebrow">Exemples</p>
+        <div id="claim-examples" class="chips"></div>
+        <label class="field" for="claim">
+          <span>Affirmation</span>
+          <textarea id="claim" rows="3" placeholder="Ex. : On nous cache forcément la vérité."></textarea>
+        </label>
+        <button type="button" class="btn" id="btn-analyser">Décomposer</button>
+        <div id="analyser-result" class="result" hidden></div>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <p>Inspiré de Logic Theorist (Newell, Simon &amp; Shaw, 1955–56). Pas de connexion : tout reste ici.</p>
+    </footer>
+  </div>
+  <script type="module" src="./js/app.js?v=ll-v1"></script>
+</body>
+</html>
