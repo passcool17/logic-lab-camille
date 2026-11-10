@@ -1,10 +1,10 @@
-const CACHE = 'logic-lab-v1';
+const CACHE = 'logic-lab-v2';
 const ASSETS = [
   './',
   './index.html',
-  './style.css?v=ll-v1',
-  './js/app.js?v=ll-v1',
-  './js/logic.js',
+  './style.css?v=ll-v2',
+  './js/app.js?v=ll-v2',
+  './js/logic.js?v=ll-v2',
   './favicon.svg',
   './manifest.webmanifest',
 ];

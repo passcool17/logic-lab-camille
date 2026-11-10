@@ -4,13 +4,12 @@ Petite PWA éducative pour apprendre à vérifier un raisonnement (style *Logic 
 
 ## Outils
 
-1. **Validité d’argument** — prémisses + conclusion, contre-exemple si besoin, formes classiques.
-2. **Table de vérité** — tautologie / contradiction / contingente.
-3. **Analyser une affirmation** — checklist de logicien (hors ligne).
+1. **Validité d’argument** — prémisses + conclusion, contre-exemple pas à pas, formes classiques avec une phrase simple.
+2. **Table de vérité** — tautologie / contradiction / contingente. Mode « Montre-moi » ou « Je la remplis ».
+3. **Analyser une affirmation** — checklist de logicien (hors ligne, réponses sauvées par affirmation).
+4. **Phrase → formule** — une phrase en français devient une formule, avec les lettres expliquées.
 
 ## Lancer en local
-
-Ouvre `index.html` via un petit serveur (modules ES) :
 
 ```bash
 npx --yes serve -l 4177 .
@@ -20,6 +19,7 @@ npx --yes serve -l 4177 .
 
 ```bash
 npm test
+npm run test:ui
 ```
 
 ## Live

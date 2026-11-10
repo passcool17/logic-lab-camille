@@ -9,13 +9,13 @@
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <link rel="apple-touch-icon" href="./favicon.svg">
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="stylesheet" href="./style.css?v=ll-v1">
+  <link rel="stylesheet" href="./style.css?v=ll-v2">
 </head>
 <body>
   <div id="app">
     <header class="topbar">
       <div class="brand-wrap">
-        <span class="logo" aria-hidden="true">∀</span>
+        <span class="logo" aria-hidden="true">→</span>
         <div>
           <div class="brand">Atelier Logique</div>
           <div class="brand-sub">pour Camille</div>
@@ -23,10 +23,15 @@
       </div>
     </header>
 
-    <section class="card intro">
-      <p class="eyebrow">Logic theorist, pas conspiracy theorist</p>
+    <section class="card intro" id="intro">
       <h1>Vérifier le raisonnement</h1>
-      <p class="lede">Un <em>logic theorist</em> (comme Logic Theorist, 1956) part des prémisses et regarde si la conclusion suit. Un conspiracy theorist part de la conclusion et cherche ce qui la confirme. Ici, on joue au premier.</p>
+      <button type="button" class="intro-toggle" id="btn-intro" aria-expanded="false" aria-controls="intro-body">
+        Partir des prémisses, pas de la conclusion
+        <span class="intro-chevron">Pourquoi ?</span>
+      </button>
+      <div id="intro-body" class="intro-body" hidden>
+        <p class="lede">On part de ce qu’on suppose vrai, puis on regarde si la conclusion suit vraiment. On ne commence pas par la conclusion pour chercher ce qui l’arrange.</p>
+      </div>
     </section>
 
     <nav class="tabs" role="tablist" aria-label="Outils">
@@ -43,7 +48,7 @@
         <div id="examples" class="chips"></div>
         <label class="field" for="premises">
           <span>Prémisses</span>
-          <textarea id="premises" rows="4" placeholder="P → Q&#10;P" autocomplete="off" spellcheck="false"></textarea>
+          <textarea id="premises" rows="3" placeholder="P → Q&#10;P" autocomplete="off" spellcheck="false"></textarea>
         </label>
         <label class="field" for="conclusion">
           <span>Conclusion</span>
@@ -52,6 +57,17 @@
         <div id="sym-validite" class="sym-bar" aria-label="Symboles"></div>
         <button type="button" class="btn" id="btn-validite">Vérifier</button>
         <div id="validite-result" class="result" hidden></div>
+      </div>
+      <div class="card phrase-card">
+        <h3>Phrase → formule</h3>
+        <p class="lede-sm">Écris une phrase en français. On la tourne en formule, avec une lettre pour chaque idée.</p>
+        <label class="field" for="phrase-validite">
+          <span>Phrase</span>
+          <textarea id="phrase-validite" rows="2" placeholder="Ex. : S’il pleut, alors la rue est mouillée."></textarea>
+        </label>
+        <div class="chips phrase-examples" data-target="phrase-validite"></div>
+        <button type="button" class="btn secondary" id="btn-phrase-validite">Traduire</button>
+        <div id="phrase-validite-result" class="result" hidden></div>
       </div>
     </section>
 
@@ -66,15 +82,29 @@
           <input id="formula" type="text" placeholder="(P → Q) ∧ P" autocomplete="off" spellcheck="false">
         </label>
         <div id="sym-table" class="sym-bar" aria-label="Symboles"></div>
-        <button type="button" class="btn" id="btn-table">Générer la table</button>
+        <div class="btn-row">
+          <button type="button" class="btn" id="btn-table">Montre-moi</button>
+          <button type="button" class="btn secondary" id="btn-table-fill">Je la remplis</button>
+        </div>
         <div id="table-result" class="result" hidden></div>
+      </div>
+      <div class="card phrase-card">
+        <h3>Phrase → formule</h3>
+        <p class="lede-sm">Une phrase en français, une formule, et les lettres expliquées.</p>
+        <label class="field" for="phrase-table">
+          <span>Phrase</span>
+          <textarea id="phrase-table" rows="2" placeholder="Ex. : Il pleut ou il neige."></textarea>
+        </label>
+        <div class="chips phrase-examples" data-target="phrase-table"></div>
+        <button type="button" class="btn secondary" id="btn-phrase-table">Traduire</button>
+        <div id="phrase-table-result" class="result" hidden></div>
       </div>
     </section>
 
     <section id="panel-analyser" class="panel" role="tabpanel" hidden>
       <div class="card">
         <h2>Analyser une affirmation</h2>
-        <p class="lede">Colle une phrase forte. L’app te guide avec les questions d’un logicien. Tes réponses restent sur ton téléphone.</p>
+        <p class="lede">Colle une phrase forte. L’app te guide avec les questions d’un logicien. Tes réponses sont sauvées sur ton téléphone, pour cette affirmation.</p>
         <p class="eyebrow">Exemples</p>
         <div id="claim-examples" class="chips"></div>
         <label class="field" for="claim">
@@ -86,10 +116,25 @@
       </div>
     </section>
 
+    <section class="card glossary" id="glossaire">
+      <h2>Glossaire</h2>
+      <p class="lede-sm">Les mots savants, dits simplement.</p>
+      <dl id="glossary-list"></dl>
+    </section>
+
+    <section class="card bridges">
+      <h2>Pour t’entraîner</h2>
+      <p class="lede-sm">Deux jeux calmes, faits aussi pour Camille.</p>
+      <ul class="bridge-list">
+        <li><a href="https://passcool17.github.io/logic-theorist-camille/">Logic Theorist</a> — l’histoire de la machine qui raisonne, en 1956.</li>
+        <li><a href="https://passcool17.github.io/atelier-preuves/">L’atelier des preuves</a> — prouve toi-même de petits théorèmes, dans un jardin zen.</li>
+      </ul>
+    </section>
+
     <footer class="foot">
       <p>Inspiré de Logic Theorist (Newell, Simon &amp; Shaw, 1955–56). Pas de connexion : tout reste ici.</p>
     </footer>
   </div>
-  <script type="module" src="./js/app.js?v=ll-v1"></script>
+  <script type="module" src="./js/app.js?v=ll-v2"></script>
 </body>
 </html>
