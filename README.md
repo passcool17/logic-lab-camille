@@ -8,6 +8,8 @@ Petite PWA éducative pour apprendre à vérifier un raisonnement (style *Logic 
 2. **Table de vérité** — tautologie / contradiction / contingente. Mode « Montre-moi » ou « Je la remplis ».
 3. **Analyser une affirmation** — checklist de logicien (hors ligne, réponses sauvées par affirmation).
 4. **Phrase → formule** — une phrase en français devient une formule, avec les lettres expliquées.
+5. **Leçons** — cinq mini-leçons (une idée à la fois), puis « Essaie dans l’outil ».
+6. **Cahier** — dix petits exercices, progression sauvée sur le téléphone.
 
 ## Lancer en local
 

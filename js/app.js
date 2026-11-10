@@ -5,7 +5,15 @@ import {
   phraseToFormula,
   GLOSSARY,
   KIND_GLOSS,
-} from './logic.js?v=ll-v2';
+} from './logic.js?v=ll-v3';
+import {
+  LESSONS,
+  EXERCISES,
+  loadProgress,
+  saveProgress,
+  gradeExercise,
+  exerciseStats,
+} from './learn.js?v=ll-v3';
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -116,7 +124,7 @@ function initTabs() {
     btn.addEventListener('click', () => setTab(btn.dataset.tab));
   });
   const hash = (location.hash || '#validite').slice(1);
-  const ok = ['validite', 'table', 'analyser'].includes(hash) ? hash : 'validite';
+  const ok = ['validite', 'table', 'analyser', 'lecons'].includes(hash) ? hash : 'validite';
   setTab(ok);
 }
 
@@ -582,6 +590,189 @@ function initAnalyser() {
   $('#btn-analyser').addEventListener('click', runAnalyser);
 }
 
+
+function tryInTool(action) {
+  if (action.tab === 'table') {
+    setTab('table');
+    const input = $('#formula');
+    input.value = action.formula;
+    if (action.fill) $('#btn-table-fill').click();
+    else $('#btn-table').click();
+    $('#table-result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  } else if (action.tab === 'validite') {
+    setTab('validite');
+    $('#premises').value = action.premises;
+    $('#conclusion').value = action.conclusion;
+    $('#btn-validite').click();
+    $('#validite-result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  } else if (action.tab === 'analyser') {
+    setTab('analyser');
+    $('#claim').value = action.claim || '';
+    $('#btn-analyser').click();
+  }
+}
+
+function initLearn() {
+  const leconsView = $('#lecons-view');
+  const cahierView = $('#cahier-view');
+  if (!leconsView || !cahierView) return;
+
+  let progress = loadProgress();
+  let lessonIndex = Math.max(0, LESSONS.findIndex((l) => l.id === progress.lastLesson));
+  if (lessonIndex < 0) lessonIndex = 0;
+  let exoIndex = 0;
+  const firstTodo = EXERCISES.findIndex((e) => !progress.exercises[e.id]?.done);
+  if (firstTodo >= 0) exoIndex = firstTodo;
+
+  function persist() {
+    saveProgress(progress);
+  }
+
+  $$('.learn-mode').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const mode = btn.dataset.mode;
+      $$('.learn-mode').forEach((b) => {
+        const on = b === btn;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      leconsView.hidden = mode !== 'lecons';
+      cahierView.hidden = mode !== 'cahier';
+      if (mode === 'cahier') renderCahier();
+    });
+  });
+
+  function renderLessons() {
+    const lesson = LESSONS[lessonIndex];
+    progress.lastLesson = lesson.id;
+    if (!progress.lessonsSeen.includes(lesson.id)) {
+      progress.lessonsSeen.push(lesson.id);
+    }
+    persist();
+    const body = lesson.body.map((p) => `<p>${escapeHtml(p)}</p>`).join('');
+    const dots = LESSONS.map((l, i) => {
+      const cls = i === lessonIndex ? 'current' : (progress.lessonsSeen.includes(l.id) ? 'seen' : '');
+      return `<button type="button" class="lesson-dot ${cls}" data-i="${i}" aria-label="Leçon ${i + 1} : ${escapeHtml(l.title)}"></button>`;
+    }).join('');
+    leconsView.innerHTML = `
+      <p class="lesson-progress">Leçon ${lessonIndex + 1} / ${LESSONS.length}</p>
+      <h2>${escapeHtml(lesson.title)}</h2>
+      <div class="lesson-dots">${dots}</div>
+      <div class="lesson-body">${body}</div>
+      <p class="lesson-example"><code>${escapeHtml(lesson.example)}</code></p>
+      <div class="lesson-nav">
+        <button type="button" class="btn" id="btn-essaie">Essaie dans l’outil</button>
+        ${lessonIndex < LESSONS.length - 1
+          ? '<button type="button" class="btn secondary" id="btn-lecon-suivante">Leçon suivante</button>'
+          : '<button type="button" class="btn secondary" id="btn-vers-cahier">Passer au cahier</button>'}
+      </div>
+    `;
+    $$('.lesson-dot', leconsView).forEach((d) => {
+      d.addEventListener('click', () => {
+        lessonIndex = Number(d.dataset.i);
+        renderLessons();
+      });
+    });
+    $('#btn-essaie', leconsView).addEventListener('click', () => tryInTool(lesson.try));
+    const next = $('#btn-lecon-suivante', leconsView);
+    if (next) {
+      next.addEventListener('click', () => {
+        lessonIndex = Math.min(LESSONS.length - 1, lessonIndex + 1);
+        renderLessons();
+      });
+    }
+    const toCahier = $('#btn-vers-cahier', leconsView);
+    if (toCahier) {
+      toCahier.addEventListener('click', () => {
+        $$('.learn-mode').forEach((b) => {
+          const on = b.dataset.mode === 'cahier';
+          b.classList.toggle('active', on);
+          b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+        leconsView.hidden = true;
+        cahierView.hidden = false;
+        renderCahier();
+      });
+    }
+  }
+
+  function renderCahier() {
+    const stats = exerciseStats(progress);
+    const ex = EXERCISES[exoIndex];
+    const state = progress.exercises[ex.id] || {};
+    const chips = EXERCISES.map((e, i) => {
+      const done = progress.exercises[e.id]?.done;
+      const cur = i === exoIndex ? ' active' : '';
+      const doneCls = done ? ' done' : '';
+      return `<button type="button" class="chip${cur}${doneCls}" data-exo="${i}">${i + 1}</button>`;
+    }).join('');
+    let options = '<div class="exo-options">';
+    for (const opt of ex.options) {
+      let cls = 'exo-option';
+      if (state.done) {
+        if (opt.id === ex.answer) cls += ' right';
+        if (state.choice === opt.id && opt.id !== ex.answer) cls += ' wrong';
+      }
+      options += `<button type="button" class="${cls}" data-opt="${escapeHtml(opt.id)}">${escapeHtml(opt.label)}</button>`;
+    }
+    options += '</div>';
+    let feedback = '';
+    if (state.done) {
+      const ok = state.correct;
+      feedback = `<div class="result ${ok ? 'ok' : 'bad'}"><p><strong>${ok ? 'C’est ça.' : 'Pas tout à fait.'}</strong> ${escapeHtml(ex.explain)}</p></div>`;
+    }
+    const nextLabel = exoIndex < EXERCISES.length - 1 ? 'Exercice suivant' : 'Retour au début';
+    cahierView.innerHTML = `
+      <p class="cahier-progress">${stats.done} / ${stats.total} faits${stats.done ? ` · ${stats.correct} juste${stats.correct > 1 ? 's' : ''}` : ''}</p>
+      <div class="exo-list">${chips}</div>
+      <h2>${escapeHtml(ex.title)}</h2>
+      <p class="lede">${escapeHtml(ex.prompt)}</p>
+      ${options}
+      <div class="row-actions">
+        <button type="button" class="btn" id="btn-exo-ok" ${state.done ? 'disabled' : ''}>Vérifier</button>
+      </div>
+      <div id="exo-feedback">${feedback}</div>
+      <div class="exo-actions">
+        <button type="button" class="btn secondary" id="btn-exo-next">${nextLabel}</button>
+      </div>
+    `;
+    $$('.exo-list .chip', cahierView).forEach((c) => {
+      c.addEventListener('click', () => {
+        exoIndex = Number(c.dataset.exo);
+        renderCahier();
+      });
+    });
+    let picked = state.choice || null;
+    if (!state.done) {
+      $$('.exo-option', cahierView).forEach((btn) => {
+        btn.addEventListener('click', () => {
+          picked = btn.dataset.opt;
+          $$('.exo-option', cahierView).forEach((b) => b.classList.toggle('picked', b === btn));
+        });
+      });
+    }
+    const checkBtn = $('#btn-exo-ok', cahierView);
+    checkBtn.addEventListener('click', () => {
+      if (state.done) return;
+      if (!picked) {
+        const fb = $('#exo-feedback', cahierView);
+        fb.innerHTML = '<p class="tip">Choisis une réponse, puis vérifie.</p>';
+        return;
+      }
+      const correct = gradeExercise(ex, picked);
+      progress.exercises[ex.id] = { done: true, correct, choice: picked };
+      persist();
+      renderCahier();
+    });
+    $('#btn-exo-next', cahierView).addEventListener('click', () => {
+      exoIndex = (exoIndex + 1) % EXERCISES.length;
+      renderCahier();
+    });
+  }
+
+  renderLessons();
+}
+
 function registerSW() {
   if (!('serviceWorker' in navigator)) return;
   window.addEventListener('load', () => {
@@ -597,6 +788,7 @@ function main() {
   initTable();
   initAnalyser();
   fillPhraseExamples();
+  initLearn();
   registerSW();
 }
 

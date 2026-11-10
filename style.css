@@ -117,6 +117,8 @@ h3 { margin: 0 0 6px; font-size: 1.05rem; }
   gap: 6px;
   margin-bottom: 12px;
 }
+.tabs-4 { grid-template-columns: repeat(4, 1fr); }
+.tabs-4 .tab { font-size: 0.8rem; padding: 10px 4px; }
 .tab {
   appearance: none;
   border: 1px solid color-mix(in srgb, var(--sage) 35%, white);
@@ -378,3 +380,41 @@ table.truth td.fill-cell { padding: 4px; }
 @media (min-width: 520px) {
   .tab { font-size: 0.92rem; }
 }
+
+.learn-switch { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.learn-mode.active { background: var(--sage); color: var(--cream); border-color: var(--sage-deep); }
+.lesson-progress, .cahier-progress { font-size: 0.82rem; color: var(--sage-deep); font-weight: 650; margin: 0 0 8px; }
+.lesson-body p { margin: 0 0 8px; line-height: 1.55; }
+.lesson-example {
+  margin: 8px 0 12px;
+  padding: 8px 12px;
+  background: var(--cream);
+  border-radius: 10px;
+  font-weight: 700;
+}
+.lesson-nav, .exo-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.lesson-dots { display: flex; gap: 6px; margin: 8px 0 12px; }
+.lesson-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--cream-dark);
+  border: 0; padding: 0; cursor: pointer;
+}
+.lesson-dot.current { background: var(--sage); transform: scale(1.2); }
+.lesson-dot.seen { background: color-mix(in srgb, var(--sage) 55%, white); }
+.exo-list { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; }
+.exo-list .chip.done { background: #d7edd9; }
+.exo-options { display: grid; gap: 8px; margin: 10px 0; }
+.exo-option {
+  appearance: none;
+  text-align: left;
+  border: 1px solid color-mix(in srgb, var(--sage) 35%, white);
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px;
+  font: inherit;
+  cursor: pointer;
+  min-height: 44px;
+}
+.exo-option.picked { outline: 2px solid var(--sage); }
+.exo-option.right { background: #f1f8f2; border-color: var(--ok); }
+.exo-option.wrong { background: #fbf1ef; border-color: var(--bad); }
