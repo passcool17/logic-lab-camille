@@ -35,7 +35,7 @@ body { min-height: 100dvh; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   position: sticky;
   top: 0;
   z-index: 5;
@@ -53,7 +53,8 @@ body { min-height: 100dvh; }
   background: var(--sage);
   color: var(--cream);
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1.35rem;
+  line-height: 1;
 }
 .brand { font-weight: 700; font-size: 1rem; }
 .brand-sub { font-size: 0.78rem; color: var(--ink-soft); }
@@ -66,7 +67,33 @@ body { min-height: 100dvh; }
   box-shadow: var(--shadow);
   margin-bottom: 12px;
 }
-.intro h1 { font-size: 1.45rem; margin: 0 0 8px; line-height: 1.25; }
+.intro { padding: 12px 16px; }
+.intro h1 { font-size: 1.25rem; margin: 0 0 6px; line-height: 1.25; }
+.intro-toggle {
+  appearance: none;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border: 0;
+  background: transparent;
+  color: var(--ink-soft);
+  font: inherit;
+  font-size: 0.88rem;
+  text-align: left;
+  padding: 0;
+  cursor: pointer;
+  min-height: 36px;
+}
+.intro-chevron {
+  flex-shrink: 0;
+  color: var(--sage-deep);
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+.intro-toggle[aria-expanded="true"] .intro-chevron { color: var(--ink); }
+.intro-body { margin-top: 6px; }
 .eyebrow {
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -82,6 +109,7 @@ body { min-height: 100dvh; }
 }
 .lede-sm { font-size: 0.95rem; }
 h2 { margin: 0 0 8px; font-size: 1.2rem; }
+h3 { margin: 0 0 6px; font-size: 1.05rem; }
 
 .tabs {
   display: grid;
@@ -181,6 +209,14 @@ h2 { margin: 0 0 8px; font-size: 1.2rem; }
   padding: 10px 14px;
   min-height: 44px;
 }
+.btn-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.btn-row .btn,
+.btn-row .btn.secondary { width: 100%; margin-bottom: 0; }
 .row-actions { margin-top: 8px; }
 
 .result {
@@ -207,6 +243,7 @@ h2 { margin: 0 0 8px; font-size: 1.2rem; }
 .badge.good { background: #d7edd9; color: var(--ok); }
 .badge.warn { background: #f6ddd7; color: var(--bad); }
 .tip { margin: 0 0 8px; color: var(--ink-soft); font-size: 0.92rem; }
+.gloss { margin: 0 0 8px; font-size: 0.9rem; color: var(--ink); }
 .meta-line { margin: 0; font-size: 0.88rem; color: var(--ink-soft); }
 .counter code {
   display: inline-block;
@@ -215,6 +252,18 @@ h2 { margin: 0 0 8px; font-size: 1.2rem; }
   border-radius: 8px;
   font-size: 0.95rem;
 }
+.steps { margin: 8px 0 0; padding: 0; list-style: none; }
+.steps li {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 0;
+  border-top: 1px solid color-mix(in srgb, var(--sage) 20%, white);
+  font-size: 0.92rem;
+}
+.steps .vf { font-weight: 700; }
+.steps .vf.t { color: var(--ok); }
+.steps .vf.f { color: var(--bad); }
 
 .table-wrap { overflow-x: auto; margin-top: 8px; -webkit-overflow-scrolling: touch; }
 table.truth {
@@ -235,7 +284,38 @@ table.truth th {
 }
 table.truth td.t { color: var(--ok); font-weight: 700; }
 table.truth td.f { color: var(--bad); font-weight: 700; }
-table.truth td.final { background: color-mix(in srgb, var(--sage-soft) 55%, white); }
+table.truth th:last-child,
+table.truth td:last-child,
+table.truth td.final {
+  position: sticky;
+  right: 0;
+  background: color-mix(in srgb, var(--sage-soft) 70%, white);
+  box-shadow: -6px 0 8px rgba(44, 58, 47, 0.08);
+  z-index: 1;
+}
+table.truth thead th:last-child {
+  background: var(--sage);
+  color: var(--cream);
+  z-index: 2;
+}
+table.truth td.fill-cell { padding: 4px; }
+.fill-btn {
+  appearance: none;
+  min-width: 40px;
+  min-height: 40px;
+  border: 1px dashed color-mix(in srgb, var(--sage) 45%, white);
+  background: #fff;
+  border-radius: 8px;
+  font: inherit;
+  font-weight: 700;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.fill-btn.t { color: var(--ok); border-style: solid; background: #f1f8f2; }
+.fill-btn.f { color: var(--bad); border-style: solid; background: #fbf1ef; }
+.fill-btn.ok { outline: 2px solid var(--ok); }
+.fill-btn.no { outline: 2px solid var(--bad); }
+.given { font-weight: 700; color: var(--ink-soft); }
 
 .claim-quote {
   margin: 0 0 12px;
@@ -272,6 +352,19 @@ table.truth td.final { background: color-mix(in srgb, var(--sage-soft) 55%, whit
   font-size: 0.85rem;
   overflow-x: auto;
 }
+
+.mapping { margin: 0 0 8px; padding-left: 18px; font-size: 0.92rem; }
+.mapping li { margin-bottom: 2px; }
+.phrase-card h3 { color: var(--sage-deep); }
+
+.glossary dl { margin: 0; }
+.glossary dt { font-weight: 700; margin-top: 10px; }
+.glossary dt:first-child { margin-top: 0; }
+.glossary dd { margin: 2px 0 0; color: var(--ink-soft); font-size: 0.92rem; }
+
+.bridge-list { margin: 0; padding-left: 18px; }
+.bridge-list li { margin-bottom: 8px; line-height: 1.45; }
+.bridge-list a { color: var(--sage-deep); font-weight: 700; }
 
 .foot {
   margin-top: 8px;
