@@ -134,7 +134,7 @@ async function main() {
   });
 
   await check('table de vérité tautologie', async () => {
-    await page.getByRole('tab', { name: 'Table de vérité' }).click();
+    await page.getByRole('tab', { name: 'Table' }).click();
     await page.getByRole('button', { name: 'P ∨ ¬P' }).click();
     await page.waitForSelector('#table-result:not([hidden])');
     const text = await page.locator('#table-result').innerText();
@@ -196,7 +196,51 @@ async function main() {
     await page.screenshot({ path: path.join(shots, 'v2-glossaire.png'), fullPage: true });
   });
 
+
+  await check('leçon flèche puis essaie dans l’outil', async () => {
+    await page.getByRole('tab', { name: 'Leçons' }).click();
+    const view = page.locator('#lecons-view');
+    await view.waitFor({ state: 'visible' });
+    const text = await view.innerText();
+    if (!/La flèche/i.test(text) || !/Essaie dans l’outil|Essaie dans l'outil/i.test(text)) throw new Error(text);
+    await page.screenshot({ path: path.join(shots, 'v3-lecons.png'), fullPage: true });
+    await page.locator('#btn-essaie').click();
+    await page.waitForSelector('#panel-table:not([hidden])');
+    const formula = await page.locator('#formula').inputValue();
+    if (formula !== 'P → Q') throw new Error(`formula=${formula}`);
+    await page.waitForSelector('#table-result:not([hidden])');
+    const tableText = await page.locator('#table-result').innerText();
+    if (!/Contingente/i.test(tableText)) throw new Error(tableText);
+    await page.screenshot({ path: path.join(shots, 'v3-essaie.png'), fullPage: true });
+  });
+
+  await check('cahier d’exercices et progression sauvée', async () => {
+    await page.getByRole('tab', { name: 'Leçons' }).click();
+    await page.getByRole('button', { name: 'Cahier' }).click();
+    const view = page.locator('#cahier-view');
+    await view.waitFor({ state: 'visible' });
+    const text = await view.innerText();
+    if (!/Est-ce valide/i.test(text) || !/0 \/ 10/i.test(text)) throw new Error(text);
+    await page.getByRole('button', { name: 'Oui, il est valide' }).click();
+    await page.locator('#btn-exo-ok').click();
+    const after = await view.innerText();
+    if (!/C’est ça|C'est ça/i.test(after) || !/1 \/ 10/i.test(after)) throw new Error(after);
+    await page.screenshot({ path: path.join(shots, 'v3-cahier.png'), fullPage: true });
+    await page.reload({ waitUntil: 'networkidle' });
+    await page.getByRole('tab', { name: 'Leçons' }).click();
+    await page.locator('.learn-mode[data-mode="cahier"]').click();
+    const saved = await page.locator('#cahier-view').innerText();
+    if (!/1 \/ 10/.test(saved)) throw new Error(`progress lost: ${saved}`);
+    const chip1 = page.locator('.exo-list .chip').first();
+    const cls = await chip1.getAttribute('class');
+    if (!/done/.test(cls || '')) throw new Error(`chip 1 not done: ${cls}`);
+    await chip1.click();
+    const again = await page.locator('#cahier-view').innerText();
+    if (!/C’est ça|C'est ça/i.test(again)) throw new Error(`answer not restored: ${again}`);
+  });
+
   await browser.close();
+
   server.close();
   if (failed) {
     console.error(`\n${failed} UI test(s) failed`);

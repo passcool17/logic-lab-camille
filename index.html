@@ -9,7 +9,7 @@
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <link rel="apple-touch-icon" href="./favicon.svg">
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="stylesheet" href="./style.css?v=ll-v2">
+  <link rel="stylesheet" href="./style.css?v=ll-v3">
 </head>
 <body>
   <div id="app">
@@ -34,10 +34,11 @@
       </div>
     </section>
 
-    <nav class="tabs" role="tablist" aria-label="Outils">
+    <nav class="tabs tabs-4" role="tablist" aria-label="Outils">
       <button type="button" class="tab active" role="tab" data-tab="validite" aria-selected="true">Validité</button>
-      <button type="button" class="tab" role="tab" data-tab="table" aria-selected="false">Table de vérité</button>
+      <button type="button" class="tab" role="tab" data-tab="table" aria-selected="false">Table</button>
       <button type="button" class="tab" role="tab" data-tab="analyser" aria-selected="false">Analyser</button>
+      <button type="button" class="tab" role="tab" data-tab="lecons" aria-selected="false">Leçons</button>
     </nav>
 
     <section id="panel-validite" class="panel" role="tabpanel">
@@ -116,6 +117,18 @@
       </div>
     </section>
 
+
+    <section id="panel-lecons" class="panel" role="tabpanel" hidden>
+      <div class="card">
+        <div class="learn-switch" role="tablist" aria-label="Leçons ou cahier">
+          <button type="button" class="chip learn-mode active" data-mode="lecons" aria-pressed="true">Leçons</button>
+          <button type="button" class="chip learn-mode" data-mode="cahier" aria-pressed="false">Cahier</button>
+        </div>
+        <div id="lecons-view"></div>
+        <div id="cahier-view" hidden></div>
+      </div>
+    </section>
+
     <section class="card glossary" id="glossaire">
       <h2>Glossaire</h2>
       <p class="lede-sm">Les mots savants, dits simplement.</p>
@@ -135,6 +148,6 @@
       <p>Inspiré de Logic Theorist (Newell, Simon &amp; Shaw, 1955–56). Pas de connexion : tout reste ici.</p>
     </footer>
   </div>
-  <script type="module" src="./js/app.js?v=ll-v2"></script>
+  <script type="module" src="./js/app.js?v=ll-v3"></script>
 </body>
 </html>
